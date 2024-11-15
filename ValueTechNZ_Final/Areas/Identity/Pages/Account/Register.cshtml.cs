@@ -127,12 +127,31 @@ namespace ValueTechNZ_Final.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                // Adding extended fields
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.Address = Input.Address;
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
+                    // Add the user to the client role
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Client");
+                    if (!roleResult.Succeeded)
+                    {
+                        // Log role assignment errors
+                        foreach(var error in roleResult.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+
+                        // Delete user if role asignment fails
+                        await _userManager.DeleteAsync(user);
+                        return Page();
+                    }
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
