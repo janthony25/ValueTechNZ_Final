@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ValueTechNZ_Final.Data;
 
@@ -11,9 +12,11 @@ using ValueTechNZ_Final.Data;
 namespace ValueTechNZ_Final.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241115231944_add Product and Categories")]
+    partial class addProductandCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -258,11 +261,11 @@ namespace ValueTechNZ_Final.Data.Migrations
 
             modelBuilder.Entity("ValueTechNZ_Final.Models.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("ProductKey")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductKey"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -287,7 +290,7 @@ namespace ValueTechNZ_Final.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProductId");
+                    b.HasKey("ProductKey");
 
                     b.ToTable("Products");
                 });

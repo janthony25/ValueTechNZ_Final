@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Internal;
 using NuGet.Packaging;
 using ValueTechNZ_Final.Data;
 using ValueTechNZ_Final.Models;
+using ValueTechNZ_Final.Repository;
+using ValueTechNZ_Final.Repository.IRepository;
 using ValueTechNZ_Final.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +28,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -51,6 +54,7 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {

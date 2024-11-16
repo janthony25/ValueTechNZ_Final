@@ -1,0 +1,59 @@
+﻿@model List<ValueTechNZ_Final.Models.Dto.GetProductsDto>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h2 class="text-center mb-5">@ViewData["Title"]</h2>
+
+<div class="row mb-5">
+    <div class="col">
+        <a class="btn btn-primary btn-sm" asp-controller="Products" asp-action="Create">New Products</a>
+    </div>
+    <div class="col-4">
+        <form role="search" class="d-flex">
+            <input type="search" name="search" class="form-control me-3" placeholder="Search" />
+            <button type="submit" class="btn btn-secondary">Search</button>
+        </form>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">Product</th>
+            <th class="text-center">Brand</th>
+            <th class="text-center">Category</th>
+            <th class="text-center">Price</th>
+            <th class="text-center">Image</th>
+            <th class="text-center">Date Added</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model == null || Model.Count == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="8">No items available</td>
+            </tr>
+        }
+
+        @foreach(var product in Model)
+        {
+            <tr>
+                <td class="text-center">@product.ProductId</td>
+                <td class="text-center">@product.ProductName</td>
+                <td class="text-center">@product.Brand</td>
+                <td class="text-center">@product.CategoryName</td>
+                <td class="text-center">@product.Price</td>
+                <td class="text-center"><img src="/images/@product.ImageFileName" width="100" /></td>
+                <td class="text-center">@(product.DateAdded.ToString("MM//dd//yyyy"))</td>
+                <td class="text-center">
+                    <a class="btn btn-primary btn-sm" asp-controller="Products" asp-action="Edit" asp-route-id="@product.ProductId">Edit</a>
+                    <a class="btn btn-danger btn-sm" asp-controller="Products" asp-action="Delete" asp-route-id="@product.ProductId" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
