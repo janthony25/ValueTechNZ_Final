@@ -30,6 +30,7 @@ namespace ValueTechNZ_Final.Controllers
             catch(Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while retrieving product list.");
+                TempData["ErrorMessage"] = "An error occurred while retrieving product list.";
                 return View();
             }
         }

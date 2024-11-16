@@ -22,54 +22,35 @@ namespace ValueTechNZ_Final.Repository
 
         public async Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber, int pagSize)
         {
-            var query = _data.Products
+            try
+            {
+                var query = _data.Products
                     .Include(p => p.ProductCategory)
                         .ThenInclude(pc => pc.Category)
                     .AsQueryable();
 
-            var finalQuery = query.Select(p => new GetProductsDto
-            {
-                ProductId = p.ProductId,
-                ProductName = p.ProductName,
-                Brand = p.Brand,
-                Price = p.Price,
-                CategoryName = p.ProductCategory
-                        .Select(pc => pc.Category.CategoryName)
-                        .FirstOrDefault(),
-                Description = p.Description,
-                ImageFileName = p.ImageFileName,
-                DateAdded = p.DateAdded
-            });
+                var finalQuery = query.Select(p => new GetProductsDto
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName,
+                    Brand = p.Brand,
+                    Price = p.Price,
+                    CategoryName = p.ProductCategory
+                            .Select(pc => pc.Category.CategoryName)
+                            .FirstOrDefault(),
+                    Description = p.Description,
+                    ImageFileName = p.ImageFileName,
+                    DateAdded = p.DateAdded
+                });
 
-            return await PaginatedList<GetProductsDto>.CreateAsync(finalQuery, pageNumber, pagSize);
-        }
-
-        public async Task<List<GetProductsDto>> GetProductsAsync()
-        {
-            try
-            {
-                var products = await _data.Products
-                            .Include(p => p.ProductCategory)
-                                .ThenInclude(pc => pc.Category)
-                            .Select(p => new GetProductsDto
-                            {
-                                ProductId = p.ProductId,
-                                ProductName = p.ProductName,
-                                Brand = p.Brand,
-                                Price = p.Price,
-                                Description = p.Description,
-                                ImageFileName = p.ImageFileName,
-                                CategoryName = p.ProductCategory.Select(pc => pc.Category.CategoryName).FirstOrDefault()
-                            }).ToListAsync();
-
-                _logger.LogInformation($"Retrieved {products.Count} products");
-                return products;
+                return await PaginatedList<GetProductsDto>.CreateAsync(finalQuery, pageNumber, pagSize);
             }
             catch(Exception ex)
             {
-                _logger.LogError("An error occurred while retrieving product list.");
+                _logger.LogError(ex, "An error occurred while retrieving product list.");
                 throw;
-            }
+            }            
         }
+
     }
 }

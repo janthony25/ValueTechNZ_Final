@@ -6,7 +6,6 @@ namespace ValueTechNZ_Final.Repository.IRepository
 {
     public interface IProductRepository
     {
-        Task<List<GetProductsDto>> GetProductsAsync();
         Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber,
                                                                       int pagSize);
     }
