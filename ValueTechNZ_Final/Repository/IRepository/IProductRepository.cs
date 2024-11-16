@@ -8,5 +8,6 @@ namespace ValueTechNZ_Final.Repository.IRepository
     {
         Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber,
                                                                       int pagSize);
+        Task AddProductAsync(AddUpdateProductDto addDto);
     }
 }

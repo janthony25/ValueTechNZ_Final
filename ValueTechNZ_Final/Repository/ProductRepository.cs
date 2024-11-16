@@ -20,6 +20,62 @@ namespace ValueTechNZ_Final.Repository
             _environment = environment;
         }
 
+        public async Task AddProductAsync(AddUpdateProductDto addDto)
+        {
+            try
+            {
+                string newFileName = null;
+
+                if (addDto.ImageFile != null && addDto.ImageFile.Length > 0)
+                {
+                    newFileName = DateTime.Now.ToString("yyyyMMddhhssfff");
+                    newFileName += Path.GetExtension(addDto.ImageFile!.FileName);
+
+                    string imageFullPath = _environment.WebRootPath + "/images/" + newFileName;
+                    using (var stream = System.IO.File.Create(imageFullPath))
+                    {
+                        addDto.ImageFile.CopyTo(stream);
+                    }
+                }
+                else
+                {
+                    // Assign default image
+                    newFileName = "No image.png";
+                }
+
+                // Add new product
+                var product = new Product
+                {
+                    ProductName = addDto.ProductName,
+                    Brand = addDto.Brand,
+                    Price = addDto.Price,
+                    Description = addDto.Description,
+                    ImageFileName = newFileName
+                };
+
+                // Add new product to DB
+                _data.Products.Add(product);
+                await _data.SaveChangesAsync();
+
+                // Create new Product Category entity
+                var productCategory = new ProductCategory
+                {
+                    ProductId = product.ProductId,
+                    CategoryId = addDto.CategoryId
+                };
+
+                // Save product category to DB
+                _data.ProductCategories.Add(productCategory);
+                await _data.SaveChangesAsync();
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while adding new product.");
+                throw;
+            }
+        }
+
         public async Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber, int pagSize)
         {
             try

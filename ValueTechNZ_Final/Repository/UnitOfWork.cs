@@ -14,7 +14,10 @@ namespace ValueTechNZ_Final.Repository
             _environment = environment;
             _loggerFactory = loggerFactory;
             Products = new ProductRepository(_data, _loggerFactory, _environment);
+            Categories = new CategoryRepository(_data, _loggerFactory);
         }
         public IProductRepository Products { get; private set; }
+
+        public ICategoryRepository Categories { get; private set; }
     }
 }
