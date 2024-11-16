@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ValueTechNZ_Final.Helpers;
 using ValueTechNZ_Final.Models;
+using ValueTechNZ_Final.Models.Dto;
 using ValueTechNZ_Final.Repository.IRepository;
 
 namespace ValueTechNZ_Final.Controllers
@@ -8,6 +10,7 @@ namespace ValueTechNZ_Final.Controllers
     {
         private readonly ILogger<ProductsController> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private const int pageSize = 10;
 
         public ProductsController(ILogger<ProductsController> logger, IUnitOfWork unitOfWork)
         {
@@ -16,12 +19,12 @@ namespace ValueTechNZ_Final.Controllers
         }
 
         // GET : Products list
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts(int pageNumber = 1)
         {
             try
             {
                 _logger.LogInformation("Request to retrieve product list.");
-                var products = await _unitOfWork.Products.GetProductsAsync();
+                var products = await _unitOfWork.Products.GetPaginatedProductsAsync(pageNumber, pageSize);
                 return View(products);
             }
             catch(Exception ex)
