@@ -20,12 +20,16 @@ namespace ValueTechNZ_Final.Controllers
         }
 
         // GET : Products list
-        public async Task<IActionResult> GetProducts(int pageNumber = 1)
+        public async Task<IActionResult> GetProducts(int pageNumber = 1,
+                                                     string search = null,
+                                                     string sortColumn = "dateadded",
+                                                     string sortOrder = "desc")
         {
             try
             {
                 _logger.LogInformation("Request to retrieve product list.");
-                var products = await _unitOfWork.Products.GetPaginatedProductsAsync(pageNumber, pageSize);
+                var products = await _unitOfWork.Products.GetPaginatedProductsAsync(pageNumber, pageSize,
+                                                                                    search, sortColumn, sortOrder);
                 return View(products);
             }
             catch (Exception ex)

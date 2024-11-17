@@ -76,7 +76,10 @@ namespace ValueTechNZ_Final.Repository
             }
         }
 
-        public async Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber, int pagSize)
+        public async Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber, int pagSize,
+                                                                                   string? searchTerm,
+                                                                                   string sortColumn = "DateAdded",
+                                                                                   string sortOrder = "desc")   
         {
             try
             {
@@ -84,6 +87,32 @@ namespace ValueTechNZ_Final.Repository
                     .Include(p => p.ProductCategory)
                         .ThenInclude(pc => pc.Category)
                     .AsQueryable();
+
+                // Apply search filter if the searchTerm is provided
+                if (!string.IsNullOrWhiteSpace(searchTerm))
+                {
+                    searchTerm = searchTerm.ToLower();
+                    query = query.Where(p =>
+                        p.ProductName.ToLower().Contains(searchTerm) || 
+                        p.Brand.ToLower().Contains(searchTerm) || 
+                        p.ProductCategory.Any(pc => pc.Category.CategoryName.ToLower().Contains(searchTerm)
+                        ));
+                }
+
+                // Apply sorting based on column
+                query = sortColumn.ToLower() switch
+                {
+                    "id" => sortOrder == "desc" ? query.OrderByDescending(p => p.ProductId) : query.OrderBy(p => p.ProductId),
+                    "name" => sortOrder == "desc" ? query.OrderByDescending(p => p.ProductName) : query.OrderBy(p => p.ProductName),
+                    "brand" => sortOrder == "desc" ? query.OrderByDescending(p => p.Brand) : query.OrderBy(p => p.Brand),
+                    "category" => sortOrder == "desc" ?
+                        query.OrderByDescending(p => p.ProductCategory.FirstOrDefault().Category.CategoryName) :
+                        query.OrderBy(p => p.ProductCategory.FirstOrDefault().Category.CategoryName),
+                    "price" => sortOrder == "desc" ? query.OrderByDescending(p => p.Price) : query.OrderBy(p => p.Price),
+                    "dateadded" => sortOrder == "desc" ? query.OrderByDescending(p => p.DateAdded) : query.OrderBy(p => p.DateAdded),
+                    _ => query.OrderByDescending(p => p.DateAdded)
+                };
+                    
 
                 var finalQuery = query.Select(p => new GetProductsDto
                 {

@@ -7,7 +7,10 @@ namespace ValueTechNZ_Final.Repository.IRepository
     public interface IProductRepository
     {
         Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber,
-                                                                      int pagSize);
+                                                                      int pagSize,
+                                                                      string? searchTerm,
+                                                                      string sortColumn = "DateAdded",
+                                                                      string sortOrder = "desc");
         Task AddProductAsync(AddUpdateProductDto addDto);
         Task<AddUpdateProductDto> GetProductDetailsAsync(int id);
         Task UpdateProductAsync(AddUpdateProductDto updateDto);
