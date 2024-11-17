@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SQLitePCL;
 using ValueTechNZ_Final.Helpers;
 using ValueTechNZ_Final.Models;
@@ -8,6 +9,7 @@ using ValueTechNZ_Final.Repository.IRepository;
 namespace ValueTechNZ_Final.Controllers
 {
     [Route("/Admin/[controller]/{action=GetProducts}/{id?}")]
+    [Authorize(Roles ="Admin")]
     public class ProductsController : Controller
     {
         private readonly ILogger<ProductsController> _logger;
