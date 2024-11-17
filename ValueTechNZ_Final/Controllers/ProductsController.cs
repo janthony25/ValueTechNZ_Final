@@ -69,6 +69,63 @@ namespace ValueTechNZ_Final.Controllers
         }
 
 
+        // GET : Edit Product
+        public async Task<IActionResult> EditProduct(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Request to retrieve details of product with id {id}");
+
+                var productDetails = await _unitOfWork.Products.GetProductDetailsAsync(id);
+                ViewBag.CategoryList = await _unitOfWork.Categories.GetCategoriesAsync();
+                return View(productDetails);
+
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError($"Product with id {id} not found.");
+                TempData["ErrorMessage"] = "Product not found.";
+                return RedirectToAction("GetProducts");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"An error occurred while retrieving product details of product with id {id}");
+                TempData["ErrorMessage"] = "An error occurred while retrieving product details.";
+                return RedirectToAction("GetProducts");
+            }
+        }
+
+        // POST : Update Product
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProduct(AddUpdateProductDto updateDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    ViewBag.CategoryList = await _unitOfWork.Categories.GetCategoriesAsync();
+                    return View(updateDto);
+                }
+
+                await _unitOfWork.Products.UpdateProductAsync(updateDto);
+                TempData["SuccessMessage"] = "Product successfully updated!";
+                return RedirectToAction("GetProducts");
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError($"Product not found.");
+                TempData["ErrorMessage"] = "Product not found.";
+                return RedirectToAction("GetProducts");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating product.");
+                TempData["ErrorMessage"] = "An error occurred while updating product.";
+                return RedirectToAction("GetProducts");
+            }
+        }
+
 
     }
 }

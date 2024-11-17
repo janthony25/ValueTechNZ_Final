@@ -108,5 +108,106 @@ namespace ValueTechNZ_Final.Repository
             }            
         }
 
+        public async Task<AddUpdateProductDto> GetProductDetailsAsync(int id)
+        {
+            try
+            {
+                var productDetails = await _data.Products
+                        .Include(p => p.ProductCategory)
+                            .ThenInclude(pc => pc.Category)
+                        .Where(p => p.ProductId == id)
+                        .Select(p => new AddUpdateProductDto
+                        {
+                            ProductId = p.ProductId,
+                            ProductName = p.ProductName,
+                            Brand = p.Brand,
+                            Price = p.Price,
+                            CategoryId = p.ProductCategory.Select(p => p.Category.CategoryId).FirstOrDefault(),
+                            Description = p.Description
+                        }).FirstOrDefaultAsync();
+
+                if(productDetails == null || productDetails.ProductId == 0)
+                {
+                    _logger.LogWarning($"Product with id {productDetails.ProductId} not found.");
+                    throw new KeyNotFoundException("Product not found.");
+                }
+
+                _logger.LogInformation($"Successfully fetched details from product with id {productDetails.ProductId}.");
+                return productDetails;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"An error occurred while retrieving product details of product with id {id}");
+                throw;
+            }
+        }
+
+        public async Task UpdateProductAsync(AddUpdateProductDto updateDto)
+        {
+            try
+            {
+                // GET Product by id
+                var product = await _data.Products.FindAsync(updateDto.ProductId);
+
+                if (product == null || product.ProductId == 0)
+                {
+                    _logger.LogError($"product with id {product.ProductId} not found.");
+                    throw new KeyNotFoundException("Product not found.");
+                }
+
+                // Update the image file if we want a new one
+                string newFileName = product.ImageFileName;
+                if (updateDto.ImageFile != null && updateDto.ImageFile.Length > 1)
+                {
+                    newFileName = DateTime.Now.ToString("yyyyMMddHHssfff");
+                    newFileName += Path.GetExtension(updateDto.ImageFile.FileName);
+
+                    string imageFullPath = _environment.WebRootPath + "/images/" + newFileName;
+                    using (var stream = System.IO.File.Create(imageFullPath))
+                    {
+                        updateDto.ImageFile.CopyTo(stream);
+                    }
+
+                    // delete the old image
+                    string oldImageFullPath = _environment.WebRootPath + "/images/" + product.ImageFileName;
+                    System.IO.File.Delete(oldImageFullPath);
+                }
+
+                // Update products
+                product.ProductName = updateDto.ProductName;
+                product.Brand = updateDto.Brand;
+                product.Price = updateDto.Price;
+                product.Description = updateDto.Description;
+                product.ImageFileName = newFileName;
+                product.DateUpdated = DateTime.Now;
+
+                // Find Product-Category Relationship
+                var existingProductCategory = await _data.ProductCategories
+                                .FirstOrDefaultAsync(pc => pc.ProductId == product.ProductId);
+
+                // Update <Product Category> if the category has been changed
+                if(existingProductCategory.CategoryId != updateDto.CategoryId)
+                {
+                    // Remove existing relationship
+                    _data.ProductCategories.Remove(existingProductCategory);
+
+                    // Create new relationship
+                    var newProductCategory = new ProductCategory
+                    {
+                        ProductId = product.ProductId,
+                        CategoryId = updateDto.CategoryId
+                    };
+
+                    await _data.ProductCategories.AddAsync(newProductCategory);
+                }
+
+                await _data.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the product.");
+                throw;
+            }
+        }
     }
 }
