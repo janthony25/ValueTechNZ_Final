@@ -7,6 +7,7 @@ using ValueTechNZ_Final.Repository.IRepository;
 
 namespace ValueTechNZ_Final.Controllers
 {
+    [Route("/Admin/[controller]/{action=GetProducts}/{id?}")]
     public class ProductsController : Controller
     {
         private readonly ILogger<ProductsController> _logger;
