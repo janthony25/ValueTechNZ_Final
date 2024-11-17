@@ -1,8 +1,36 @@
-﻿@{
+﻿@model ValueTechNZ_Final.Models.Dto.GetProductsDto
+
+@{
     ViewData["Title"] = "Home Page";
+    ViewData["HomePage"] = true;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<partial name="_Notification" />
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="grid-pattern"></div>
+    <div class="container text-white content-wrapper">
+        <div class="row align-items-center gy-4">
+            <!-- Added gy-4 for vertical spacing between columns when stacked -->
+            <div class="col-sm-6 mb-sm-5 mb-3">
+                <!-- Modified column classes -->
+                <h1 class="hero-title display-2 display-sm-3 display-xs-4">
+                    <!-- Responsive font sizes -->
+                    Value Tech NZ
+                </h1>
+                <p class="hero-description px-2 px-sm-0">
+                    <!-- Added padding control for small screens -->
+                    Find the cheapest but quality electronic devices from most popular brand here in our store!
+                </p>
+            </div>
+            <div class="col-sm-6 text-center">
+                <img src="/images/Gadgets.png"
+                     class="img-fluid gadget-image"
+                     style="max-width: 90%; width: auto;"
+                     alt="Tech gadgets collection" />
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,54 @@
+﻿/* Add responsive styles */
+@media (max-width: 575px) {
+    .hero-title {
+        font-size: 2.5rem !important; /* Override Bootstrap's display classes if needed */
+        text-align: center;
+    }
+
+    .hero-description {
+        text-align: center;
+        font-size: 1rem;
+        margin: 0 auto;
+    }
+
+    .gadget-image {
+        max-width: 85% !important;
+        margin: 0 auto;
+    }
+
+    .content-wrapper {
+        padding: 2rem 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-title {
+        font-size: 3rem;
+    }
+}
+
+/* Update gadget image styles */
+.gadget-image {
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    transform: translateY(-20px);
+    animation: float 6s ease-in-out infinite;
+    transition: all 0.3s ease;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(-20px);
+    }
+
+    50% {
+        transform: translateY(0px);
+    }
+}
+
+/* Optional: Adjust container padding for smaller screens */
+@media (max-width: 575px) {
+    .container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
