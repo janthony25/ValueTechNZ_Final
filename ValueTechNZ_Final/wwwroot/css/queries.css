@@ -1,4 +1,4 @@
-﻿/* Add responsive styles */
+﻿
 @media (max-width: 575px) {
     .hero-title {
         font-size: 2.5rem !important; /* Override Bootstrap's display classes if needed */

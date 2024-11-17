@@ -76,6 +76,36 @@ namespace ValueTechNZ_Final.Repository
             }
         }
 
+        public async Task<List<GetProductsDto>> GetLatestProductsAsync()
+        {
+            try
+            {
+                // Take 4 latest products
+                var latestProducts = await _data.Products
+                            .Include(p => p.ProductCategory)
+                                .ThenInclude(pc => pc.Category)
+                            .Take(4)
+                            .Select(p => new GetProductsDto
+                            {
+                                ProductId = p.ProductId,
+                                ProductName = p.ProductName,
+                                Brand = p.Brand,
+                                CategoryName = p.ProductCategory.Select(pc => pc.Category.CategoryName)
+                                        .FirstOrDefault(),
+                                Price = p.Price,
+                                ImageFileName = p.ImageFileName
+                            }).ToListAsync();
+
+                _logger.LogInformation($"Latest products retrieved successfully!");
+                return latestProducts;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving latest products.");
+                throw;
+            }
+        }
+
         public async Task<PaginatedList<GetProductsDto>> GetPaginatedProductsAsync(int pageNumber, int pagSize,
                                                                                    string? searchTerm,
                                                                                    string sortColumn = "DateAdded",
