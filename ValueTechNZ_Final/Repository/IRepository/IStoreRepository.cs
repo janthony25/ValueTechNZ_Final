@@ -1,9 +1,15 @@
-﻿using ValueTechNZ_Final.Models.Dto;
+﻿using ValueTechNZ_Final.Helpers;
+using ValueTechNZ_Final.Models.Dto;
 
 namespace ValueTechNZ_Final.Repository.IRepository
 {
     public interface IStoreRepository
     {
-        Task<List<GetProductsDto>> GetLatestProductsAsycn();
+        Task<PaginatedList<GetProductsDto>> GetStoreProductsAsync(int pageNumber,
+                                                                  int pageSize,
+                                                                  string? searchTerm,
+                                                                  string? brand,
+                                                                  string? category,
+                                                                  string? sort);   
     }
 }
