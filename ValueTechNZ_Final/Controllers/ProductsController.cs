@@ -133,6 +133,31 @@ namespace ValueTechNZ_Final.Controllers
             }
         }
 
+        // Delete Product
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Request to delete product with id {id}");
+
+                await _unitOfWork.Products.DeleteProductAsync(id);
+                TempData["SuccessMessage"] = "Product deleted successfully.";
+                return RedirectToAction("GetProducts");
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError($"Product not found.");
+                TempData["ErrorMessage"] = "Product not found.";
+                return RedirectToAction("GetProducts");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting product.");
+                TempData["ErrorMessage"] = "An error occurred while deleting product.";
+                return RedirectToAction("GetProducts");
+            }
+        }
+
 
     }
 }
