@@ -17,18 +17,19 @@ namespace ValueTechNZ_Final.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<UsersController> _logger;
+        private const int pageSize = 20;
         public UsersController(IUnitOfWork unitOfWork, ILogger<UsersController> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
 
         }
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int pageNumber = 1)
         {
             try
             {
                 _logger.LogInformation("Request to retrieve user list.");
-                var users = await _unitOfWork.Users.GetUsersAsnyc();
+                var users = await _unitOfWork.Users.GetUsersAsync(pageNumber, pageSize);
                 return View(users);
             }
             catch(Exception ex)

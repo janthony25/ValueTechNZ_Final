@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ValueTechNZ_Final.Data;
+using ValueTechNZ_Final.Helpers;
 using ValueTechNZ_Final.Models;
 using ValueTechNZ_Final.Repository.IRepository;
 
@@ -18,19 +19,22 @@ namespace ValueTechNZ_Final.Repository
             _roleManager = roleManager;
             _logger = loggerFactory.CreateLogger<UserRepository>();
         }
-        public async Task<List<ApplicationUser>> GetUsersAsnyc()
+
+        public async Task<PaginatedList<ApplicationUser>> GetUsersAsync(int pageNumber, int pageSize)
         {
             try
             {
-                var users = await _userManager.Users
+                var query = _userManager.Users
                             .OrderByDescending(u => u.CreatedAt)
-                            .ToListAsync();
+                            .AsQueryable();
 
-                return users;
+                
+
+                return await PaginatedList<ApplicationUser>.CreateAsync(query, pageNumber, pageSize);
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex, $"An error occured while retrieving user roles.");
+                _logger.LogError(ex, "An error occurred while retrieving user list.");
                 throw;
             }
         }
