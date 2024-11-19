@@ -1,0 +1,48 @@
+﻿@model List<ApplicationUser>
+@using Microsoft.AspNetCore.Identity;
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "List of Users";
+}
+
+<h2 class="text-center mb-5">@ViewData["Title"]</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var user in Model)
+        {
+            <tr>
+                <td>@(user.FirstName + "" + user.LastName)</td>
+                <td style="width: 300px;">@user.Email</td>
+                <td>
+                    @{
+                        var roles = await UserManager.GetRolesAsync(user);
+                        var rolesString = String.Join(", ", roles);
+
+                        var color = "text-bg-info";
+                        if (roles.Contains("Admin"))
+                        {
+                            color = "text-bg-danger";
+                        }
+                        <span class="badge rounded-pill @color">@rolesString</span>
+                    }
+                </td>
+                <td>@user.CreatedAt.ToString("MM/dd/yyyy")</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-controller="Users" asp-action="Details" 
+                    asp-rout-id="@user.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
