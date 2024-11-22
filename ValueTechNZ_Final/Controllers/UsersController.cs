@@ -75,5 +75,36 @@ namespace ValueTechNZ_Final.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        public async Task<IActionResult> EditRole(string id, string newRole)
+        {
+            if (id == null || newRole == null)
+            {
+                _logger.LogInformation($"id: {id}, role: {newRole}");
+                return RedirectToAction("Index");
+            }
+
+            var roleExists = await _roleManager.RoleExistsAsync(newRole);
+            var appUser = await _userManager.FindByIdAsync(id);
+
+            if(appUser == null || !roleExists)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var currentUser = await _userManager.GetUserAsync(User);
+            if(currentUser!.Id == appUser.Id)
+            {
+                return RedirectToAction("UserDetails", "Users", new { id });
+            }
+
+            // Update user role
+            var userRoles = await _userManager.GetRolesAsync(appUser);
+            await _userManager.RemoveFromRolesAsync(appUser, userRoles); // Delete current user role
+            await _userManager.AddToRoleAsync(appUser, newRole); // Create new user role
+
+            TempData["SuccessMessage"] = "Successfully changed user role.";
+            return RedirectToAction("UserDetails", "Users", new { id });
+        }
     }
 }

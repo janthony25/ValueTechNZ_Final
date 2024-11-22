@@ -10,7 +10,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="get" asp-controller="Users" asp-action="EditRole">
+                <form method="post" asp-controller="Users" asp-action="EditRole">
+                    @Html.AntiForgeryToken()
                     <input value="@Model.Id" name="id" type="hidden" />
                     <label class="mb-2">
                         @{
