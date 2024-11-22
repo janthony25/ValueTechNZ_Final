@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
 using ValueTechNZ_Final.Data;
 using ValueTechNZ_Final.Helpers;
 using ValueTechNZ_Final.Models;
@@ -18,6 +19,39 @@ namespace ValueTechNZ_Final.Repository
             _userManager = userManager;
             _roleManager = roleManager;
             _logger = loggerFactory.CreateLogger<UserRepository>();
+        }
+
+        public async Task<ApplicationUser> GetUserDetailsAsync(string id)
+        {
+            try
+            {
+                if(id == null || id == "")
+                {
+                    throw new KeyNotFoundException("User not found.");
+                }
+
+                var user = await _userManager.FindByIdAsync(id);
+
+                if(user == null)
+                {
+                    _logger.LogError($"user with id {id} not found.");
+                    throw new NullReferenceException("No users found.");
+                }
+
+                return user;
+
+
+            }
+            catch (KeyNotFoundException knfEx)
+            {
+                _logger.LogWarning(knfEx.Message);
+                throw; // Re-throwing to handle it at a higher level, if necessary.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occured while retrieving user details.");
+                throw;
+            }
         }
 
         public async Task<PaginatedList<ApplicationUser>> GetUsersAsync(int pageNumber, int pageSize)

@@ -8,6 +8,8 @@
     ViewData["PaginationAction"] = "Index";
 }
 
+<partial name="_Notification" />
+
 <h2 class="text-center mb-5">@ViewData["Title"]</h2>
 
 <table class="table">
@@ -41,8 +43,8 @@
                 </td>
                 <td>@user.CreatedAt.ToString("MM/dd/yyyy")</td>
                 <td>
-                    <a class="btn btn-primary btn-sm" asp-controller="Users" asp-action="Details" 
-                    asp-rout-id="@user.Id">Details</a>
+                    <a class="btn btn-primary btn-sm" asp-controller="Users" asp-action="UserDetails" 
+                    asp-route-id="@user.Id">Details</a>
                 </td>
             </tr>
         }

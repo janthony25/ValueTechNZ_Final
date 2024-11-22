@@ -7,5 +7,6 @@ namespace ValueTechNZ_Final.Repository.IRepository
     public interface IUserRepository
     {
         Task<PaginatedList<ApplicationUser>> GetUsersAsync(int pageNumber, int pageSize);
+        Task<ApplicationUser> GetUserDetailsAsync(string id);
     }
 }

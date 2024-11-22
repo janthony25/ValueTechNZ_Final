@@ -1,0 +1,66 @@
+﻿@model ApplicationUser
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="row">
+    <div class="col-lg-6 mx-auto rounded border p-4">
+        <h2 class="text-center mb-3">@ViewData["Title"]</h2>
+        <hr />
+
+        <div class="row mb-2">
+            <div class="col-sm-4">First Name</div>
+            <div class="col-sm-8">@Model.FirstName</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">Last Name</div>
+            <div class="col-sm-8">@Model.LastName</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">Email</div>
+            <div class="col-sm-8">@Model.Email</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">Address</div>
+            <div class="col-sm-8">@Model.Address</div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">Role</div>
+            <div class="col-sm-8">
+                @{
+                    var roles = ViewBag.Roles;
+
+                    var roleString = String.Join(", ", roles);
+
+                    var color = "text-bg-info";
+                    if (roles.Contains("Admin"))
+                    {
+                        color = "text-bg-danger";
+                    }
+
+                    <span class="badge rounded-pill @color">@roleString</span>
+                    <button type="button" id="btnEditRole" class="btn btn-link" data-user-id="user_id" data-bs-toggle="modal" data-bs-target="#editRoleModal">Edit</button>
+
+                
+                }
+            </div>
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-sm-4">Created at</div>
+            <div class="col-sm-8">@Model.CreatedAt</div>
+        </div>
+
+        <div>
+            <a class="btn btn-primary" asp-controller="Users" asp-action="Index">Back</a>
+            <button type="button" class="btn btn-danger">Delete</button>
+        </div>
+    </div>
+</div>
+
+
+<partial name="_EditRoleModal" />

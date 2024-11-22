@@ -88,7 +88,11 @@ namespace ValueTechNZ_Final.Repository
                 }
 
                 string imageFullPath = _environment.WebRootPath + "/images/" + product.ImageFileName;
-                System.IO.File.Delete(imageFullPath);
+                if(imageFullPath != _environment.WebRootPath + "images/No image.png")
+                {
+                    System.IO.File.Delete(imageFullPath);
+                }
+                
 
                 _data.Products.Remove(product);
                 await _data.SaveChangesAsync();
