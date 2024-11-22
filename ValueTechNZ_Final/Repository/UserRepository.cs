@@ -21,6 +21,49 @@ namespace ValueTechNZ_Final.Repository
             _logger = loggerFactory.CreateLogger<UserRepository>();
         }
 
+        public async Task<ApplicationUser> EditUserRoleAsync(string id, string newRole)
+        {
+            try
+            {
+                // Validate inputs
+                if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(newRole))
+                {
+                    _logger.LogError($"Invalid input: id = {id}, role = {newRole}");
+                    throw new ArgumentException("User ID and role are required.");
+                }
+
+                // Check if role exists
+                var roleExists = await _roleManager.RoleExistsAsync(newRole);
+                if (!roleExists)
+                {
+                    _logger.LogError($"Role '{newRole}' does not exist.");
+                    throw new ArgumentException($"The role '{newRole}' does not exist.", nameof(newRole));
+                }
+
+                // Get the user
+                var appUser = await _userManager.FindByIdAsync(id);
+                if (appUser == null)
+                {
+                    _logger.LogError($"User with ID '{id}' not found.");
+                    throw new KeyNotFoundException($"The user with ID '{id}' was not found.");
+                }
+
+                // Update roles
+                var currentRoles = await _userManager.GetRolesAsync(appUser);
+                await _userManager.RemoveFromRolesAsync(appUser, currentRoles); // Remove current roles
+                await _userManager.AddToRoleAsync(appUser, newRole);           // Add new role
+
+                // Return the updated user
+                return appUser;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating user role.");
+                throw;
+            }
+        }
+
+
         public async Task<ApplicationUser> GetUserDetailsAsync(string id)
         {
             try

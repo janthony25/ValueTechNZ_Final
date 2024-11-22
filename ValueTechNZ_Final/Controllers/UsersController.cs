@@ -78,33 +78,28 @@ namespace ValueTechNZ_Final.Controllers
 
         public async Task<IActionResult> EditRole(string id, string newRole)
         {
-            if (id == null || newRole == null)
+            try
             {
-                _logger.LogInformation($"id: {id}, role: {newRole}");
-                return RedirectToAction("Index");
+                // Prevent the logged in user from updating their own role
+                var currentRole = await _userManager.GetUserAsync(User);
+                if(currentRole!.Id == id)
+                {
+                    TempData["ErrorMessage"] = "Cannot edit your own role.";
+                    return RedirectToAction("UserDetails", new {id});
+                }
+
+                // Call the repository to update user role
+                await _unitOfWork.Users.EditUserRoleAsync(id, newRole);
+
+                TempData["SuccessMessage"] = "Successdully updated user role.";
+                return RedirectToAction("UserDetails", "Users", new {id});
             }
-
-            var roleExists = await _roleManager.RoleExistsAsync(newRole);
-            var appUser = await _userManager.FindByIdAsync(id);
-
-            if(appUser == null || !roleExists)
+            catch(Exception ex)
             {
-                return RedirectToAction("Index");
+                _logger.LogError(ex, "An error occurred while updating user role.");
+                TempData["ErrorMessage"] = "An error occurred while updating user role.";
+                return RedirectToAction("UserDetails");
             }
-
-            var currentUser = await _userManager.GetUserAsync(User);
-            if(currentUser!.Id == appUser.Id)
-            {
-                return RedirectToAction("UserDetails", "Users", new { id });
-            }
-
-            // Update user role
-            var userRoles = await _userManager.GetRolesAsync(appUser);
-            await _userManager.RemoveFromRolesAsync(appUser, userRoles); // Delete current user role
-            await _userManager.AddToRoleAsync(appUser, newRole); // Create new user role
-
-            TempData["SuccessMessage"] = "Successfully changed user role.";
-            return RedirectToAction("UserDetails", "Users", new { id });
         }
     }
 }
