@@ -10,6 +10,8 @@ namespace ValueTechNZ_Final.Repository.IRepository
                                                                   string? searchTerm,
                                                                   string? brand,
                                                                   string? category,
-                                                                  string? sort);   
+                                                                  string? sort);
+
+        Task<GetProductsDto> GetProductDetailsAsync(int id);
     }
 }

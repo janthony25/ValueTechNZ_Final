@@ -16,6 +16,44 @@ namespace ValueTechNZ_Final.Repository
             _logger = loggerFactory.CreateLogger<StoreRepository>();
         }
 
+        public async Task<GetProductsDto> GetProductDetailsAsync(int id)
+        {
+            try
+            {
+                // Find product by id
+                var product = await _data.Products
+                        .Include(p => p.ProductCategory)
+                            .ThenInclude(pc => pc.Category)
+                        .Where(p => p.ProductId == id)
+                        .Select(p => new GetProductsDto
+                        {
+                            ProductId = p.ProductId,
+                            ProductName = p.ProductName,
+                            Brand = p.Brand,
+                            Price = p.Price,
+                            CategoryName = p.ProductCategory.Select(pc => pc.Category.CategoryName).FirstOrDefault(),
+                            Description = p.Description,
+                            ImageFileName = p.ImageFileName,
+                            DateAdded = p.DateAdded,
+                            DateUpdated = p.DateUpdated
+                        }).FirstOrDefaultAsync();
+
+                if(product == null || product.ProductId == 0)
+                {
+                    _logger.LogError($"Product with id {product.ProductId} not found.");
+                    throw new KeyNotFoundException("Product not found.");
+                }
+
+                _logger.LogInformation($"Product with id {product.ProductId} retrieved successfully.");
+                return product;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving product details.");
+                throw;
+            }
+        }
+
         public async Task<PaginatedList<GetProductsDto>> GetStoreProductsAsync(int pageNumber, int pageSize, string? searchTerm, string? brand, string? category, string? sort)
         {
             try

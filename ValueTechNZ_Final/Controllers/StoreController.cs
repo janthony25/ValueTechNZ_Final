@@ -48,5 +48,29 @@ namespace ValueTechNZ_Final.Controllers
                 return View();
             }
         }
+
+
+        public async Task<IActionResult> GetProductDetails(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Request to fetch details of product with id {id}");
+                var products = await _unitOfWork.Store.GetProductDetailsAsync(id);
+
+                return View(products);
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError($"Product with id {id} not found.");
+                TempData["KeyNotFound"] = "Product not found.";
+                return RedirectToAction("GetProducts", "Products");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving product details.");
+                TempData["ErrorMessage"] = "An error occurred while retrieving product details.";
+                return RedirectToAction("GetProducts", "Products");
+            }
+        }
     }
 }
