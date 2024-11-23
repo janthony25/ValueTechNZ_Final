@@ -101,5 +101,33 @@ namespace ValueTechNZ_Final.Controllers
                 return RedirectToAction("UserDetails");
             }
         }
+
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                _logger.LogInformation($"request to delete user with id {id}");
+                // Get id of user
+                var appUser = await _userManager.FindByIdAsync(id);
+
+                // Stop current user from deleting its own user account
+                var currentUser = await _userManager.GetUserAsync(User);
+                if(currentUser!.Id == appUser.Id)
+                {
+                    TempData["ErrorMessage"] = "You cannot delete you own account.";
+                    return RedirectToAction("UserDetails", new { id });
+                }
+
+                await _unitOfWork.Users.DeleteUserAsync(id);
+                TempData["SuccessMessage"] = "User deleted successfully.";
+                return RedirectToAction("Index");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting user.");
+                TempData["ErrorMessage"] = "An error occurred while deleting user.";
+                return RedirectToAction("UserDetails");
+            }
+        }
     }
 }

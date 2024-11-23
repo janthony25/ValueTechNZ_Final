@@ -21,6 +21,29 @@ namespace ValueTechNZ_Final.Repository
             _logger = loggerFactory.CreateLogger<UserRepository>();
         }
 
+        public async Task DeleteUserAsync(string id)
+        {
+            try
+            {
+                // Find user by id
+                var user = await _userManager.FindByIdAsync(id);
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    _logger.LogError($"User not found. id: {id}");
+                    throw new KeyNotFoundException("User not found.");
+                }
+
+                await _userManager.DeleteAsync(user);
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting user.");
+                throw;
+            }
+        }
+
         public async Task<ApplicationUser> EditUserRoleAsync(string id, string newRole)
         {
             try
