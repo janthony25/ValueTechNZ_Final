@@ -15,6 +15,8 @@ namespace ValueTechNZ_Final.Repository.IRepository
         Task<AddUpdateProductDto> GetProductDetailsAsync(int id);
         Task UpdateProductAsync(AddUpdateProductDto updateDto);
         Task<List<GetProductsDto>> GetLatestProductsAsync();
+        Task<List<GetProductsDto>> GetCheapestProductsAsync();
+
         Task DeleteProductAsync(int id);
     }
 }

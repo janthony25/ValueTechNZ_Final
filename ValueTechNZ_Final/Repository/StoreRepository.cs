@@ -16,6 +16,7 @@ namespace ValueTechNZ_Final.Repository
             _logger = loggerFactory.CreateLogger<StoreRepository>();
         }
 
+       
         public async Task<GetProductsDto> GetProductDetailsAsync(int id)
         {
             try

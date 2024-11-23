@@ -23,6 +23,7 @@ namespace ValueTechNZ_Final.Controllers
                 _logger.LogInformation("Request to retrive latest products.");
 
                 var latestProducts = await _unitOfWork.Products.GetLatestProductsAsync();
+                ViewBag.CheapestProducts = await _unitOfWork.Products.GetCheapestProductsAsync();
                 return View(latestProducts);
 
             }

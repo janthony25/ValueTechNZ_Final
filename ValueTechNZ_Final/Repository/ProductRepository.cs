@@ -110,6 +110,36 @@ namespace ValueTechNZ_Final.Repository
             }
         }
 
+        public async Task<List<GetProductsDto>> GetCheapestProductsAsync()
+        {
+            try
+            {
+                var cheapestProducts = await _data.Products
+                    .Include(p => p.ProductCategory)
+                        .ThenInclude(pc => pc.Category)
+                    .OrderBy(p => p.Price)
+                    .Take(4)
+                    .Select(p => new GetProductsDto
+                    {
+                        ProductId = p.ProductId,
+                        ProductName = p.ProductName,
+                        Brand = p.Brand,
+                        Price = p.Price,
+                        CategoryName = p.ProductCategory.Select(pc => pc.Category.CategoryName).FirstOrDefault(),
+                        Description = p.Description,
+                        ImageFileName = p.ImageFileName,
+                        DateAdded = p.DateAdded
+                    }).ToListAsync();
+
+                return cheapestProducts;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving cheapest products.");
+                throw;
+            }
+        }
+
         public async Task<List<GetProductsDto>> GetLatestProductsAsync()
         {
             try
