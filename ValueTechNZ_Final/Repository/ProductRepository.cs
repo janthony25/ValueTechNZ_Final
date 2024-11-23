@@ -87,10 +87,15 @@ namespace ValueTechNZ_Final.Repository
                     throw new KeyNotFoundException($"Product with id {id} not found");
                 }
 
-                string imageFullPath = _environment.WebRootPath + "/images/" + product.ImageFileName;
-                if(imageFullPath != _environment.WebRootPath + "images/No image.png")
+                string imageFullPath = Path.Combine(_environment.WebRootPath, "images", product.ImageFileName);
+                
+                // Check if the image is not the default image
+                if(!product.ImageFileName.Equals("No image.png", StringComparison.OrdinalIgnoreCase))
                 {
-                    System.IO.File.Delete(imageFullPath);
+                    if (File.Exists(imageFullPath))
+                    {
+                        File.Delete(imageFullPath);
+                    }
                 }
                 
 
