@@ -1,4 +1,7 @@
 ﻿@model ValueTechNZ_Final.Models.Dto.GetProductsDto
+@{
+    Console.WriteLine($"Product ID in details: {Model.ProductId}");
+}
 
 <partial name="_Notification" />
 
@@ -9,7 +12,7 @@
     <div class="col-md-8">
         <h3 class="mb-3">@Model.ProductName</h3>
         <h3 class="mb-3">@(Model.Price)$</h3>
-        <button type="button" class="btn btn-warning btn-sm">
+        <button type="button" class="btn btn-warning btn-sm mb-2 ms-2" onclick="addToCart(this, @Model.ProductId)">
             Add to Cart<i class="bi bi-cart4"></i>
         </button>
         <hr />

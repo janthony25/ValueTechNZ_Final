@@ -14,6 +14,78 @@
     <link rel="stylesheet" href="~/ValueTechNZ_Final.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <script>
+        function getShoppingCart() {
+            const cookieName = "shopping_cart=";
+            let cookiesArray = document.cookie.split(';');
+
+            for (let i = 0; i < cookiesArray.length; i++) {
+                let cookie = cookiesArray[i].trim();
+                if (cookie.startsWith(cookieName)) {
+                    let cookie_value = cookie.substring(cookieName.length);
+
+                    // Only try to parse base64 cookies starting with 'ey'
+                    if (cookie_value.startsWith('ey')) {
+                        try {
+                            return JSON.parse(atob(cookie_value));
+                        }
+                        catch {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            return {};
+        }
+
+        function saveCart(cart) {
+            let cartStr = btoa(JSON.stringify(cart))
+            let d = new Date();
+            d.setDate(d.getDate() + 365);
+            let expires = d.toUTCString();
+            document.cookie = "shopping_cart=" + cartStr + ";expires=" + expires + ";path=/; SameSite=Strict; Secure";
+        }
+
+        function addToCart(button, id) {
+            let cart = getShoppingCart();
+            let quantity = cart[id]
+
+            if (isNaN(quantity)) {
+                cart[id] = 1
+            }
+            else {
+                cart[id] = Number(quantity) + 1;
+            }
+
+            saveCart(cart);
+            button.innerHTML = "Added <i class='bi bi-check-lg'></i>";
+
+            let cartSize = 0;
+            for (var cartItem of Object.entries(cart)) {
+                quantity = cartItem[1]
+                if (isNaN(quantity)) continue;
+
+                cartSize += Number(quantity)
+            }
+
+            document.getElementById("cartSize").innerHTML = cartSize;
+        }
+
+        window.onload = function () {
+            let cart = getShoppingCart();
+            let cartSize = 0;
+
+            for (var cartItem of Object.entries(cart)) {
+                let quantity = cartItem[1]
+                if (isNaN(quantity)) continue;
+                cartSize += Number(quantity)
+            }
+
+            document.getElementById("cartSize").innerHTML = cartSize;
+        }
+    </script>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
@@ -32,6 +104,17 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Store" asp-action="Index">Store</a>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav me-2">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart4 text-danger h2"></i>
+                                <span id="cartSize" class="badge text-bg-danger" style="vertical-align: top">
+                                    0
+                                </span>
+                            </a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
