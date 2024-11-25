@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using ValueTechNZ_Final.Services;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -108,7 +110,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Cart" asp-action="Index">
                                 <i class="bi bi-cart4 text-danger h2"></i>
                                 <span id="cartSize" class="badge text-bg-danger" style="vertical-align: top">
-                                    0
+                                    @CartHelper.GetCartSize(Context.Request, Context.Response)
                                 </span>
                             </a>
                         </li>
