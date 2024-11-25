@@ -18,7 +18,7 @@ namespace ValueTechNZ_Final.Models
         public string PaymentMethod { get; set; } = "";
         public string PaymentStatus { get; set; } = "";
         public string PaymentDetails { get; set; } = ""; // to store paypal details
-        public string MyProperty { get; set; } = "";
+        public string OrderStatus { get; set; } = "";
         public DateTime CreatedAt { get; set; } = DateTime.Now; 
 
     }
