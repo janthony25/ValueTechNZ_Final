@@ -81,6 +81,50 @@
              document.getElementById("cartSize").innerHTML = cartSize
          }
 
+         function increase(id){
+             let cart = getShoppingCart();
+
+             let quantity = cart[id]
+             if(isNaN(quantity)){
+                 // quantity is not a number => set to 1
+                 cart[id] = 1
+             }
+             else{
+                 cart[id] = Number(quantity) + 1;
+             }
+
+             saveCart(cart);
+             location.reload();
+         }
+
+         function decrease(id){
+             let cart = getShoppingCart();
+
+             let quantity = cart[id]
+             if(isNaN(quantity)){
+                // quantity is not a number => set exit
+                return
+             }
+
+             quantity = Number(quantity)
+
+             if(quantity > 1){
+                 cart[id] = quantity - 1
+                 saveCart(cart)
+                 location.reload()
+             }
+         }
+
+        function remove(id) {
+            let cart = getShoppingCart();
+
+            if(cart[id]){
+                delete cart[id]
+                saveCart(cart)
+                location.reload()
+            }
+        }
+
     </script>
 
 
