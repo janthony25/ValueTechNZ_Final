@@ -1,7 +1,8 @@
-﻿
+﻿@model ValueTechNZ_Final.Models.Dto.CheckoutDto
 @{
 }
 
+<partial name="_Notification" />
 
 <div class="row border rounded">
     <div class="col-md-8 p-3">
@@ -39,6 +40,84 @@
         </table>
     </div>
     <div class="col-md-4">
+        <div class="text-white rounded my-2 p-3" style="background-color: #08618d;">
+            <h4>Order Summary</h4>
+            <hr />
 
+            @using Microsoft.AspNetCore.Identity
+            @inject SignInManager<ApplicationUser> SignInManager
+
+            @if (!SignInManager.IsSignedIn(User))
+            {
+                <div class="row">
+                    <div class="col">
+                        <p>Subtotal:</p>
+                    </div>
+                    <div class="col">
+                        <p class="text-end">@(ViewBag.Subtotal)$</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col d-grid">
+                        <a class="btn btn-light" href="/Identity/Account/Register">Register</a>
+                    </div>
+                    <div class="col d-grid">
+                        <a class="btn btn-outline-light" href="/Identity/Account/Login">Login</a>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Address</label>
+                        <input  type="text" class="form-control" asp-for="DeliveryAddress" />
+                        <span asp-validation-for="DeliveryAddress" class="text-warning"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Payment Method</label>
+                        <select class="form-select" asp-for="PaymentMethod">
+                            <option value="cash">Cash on Delivery</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="paypal">Cash Paypal</option>
+                        </select>
+                    </div>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col">
+                            <p>Subtotal:</p>
+                        </div>
+                        <div class="col">
+                            <p class="text-end">@(ViewBag.Subtotal)$</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <p>Shipping:</p>
+                        </div>
+                        <div class="col">
+                            <p class="text-end">@(ViewBag.ShippingFee)$</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <p>Total:</p>
+                        </div>
+                        <div class="col">
+                            <p class="text-end">@(ViewBag.Total)$</p>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-outline-light" type="submit">Checkout</button>
+                    </div>
+                </form>
+            }
+        </div>
     </div>
 </div>              
