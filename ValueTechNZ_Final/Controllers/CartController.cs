@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ValueTechNZ_Final.Data;
 using ValueTechNZ_Final.Models;
+using ValueTechNZ_Final.Services;
 
 namespace ValueTechNZ_Final.Controllers
 {
@@ -20,7 +21,14 @@ namespace ValueTechNZ_Final.Controllers
         }
         public IActionResult Index()
         {
-            //List<OrderItem> cartItems = 
+            List<OrderItem> cartItems = CartHelper.GetCartItems(Request, Response, _data);
+            decimal subtotal = CartHelper.GetSubTotal(cartItems);
+
+            ViewBag.CartItems = cartItems;
+            ViewBag.ShippingFee = shippingFee;
+            ViewBag.Subtotal = subtotal;
+            ViewBag.Total = subtotal + shippingFee;
+
             return View();
         }
     }

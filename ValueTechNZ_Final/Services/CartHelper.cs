@@ -1,4 +1,6 @@
 ﻿using System.Text.Json;
+using ValueTechNZ_Final.Data;
+using ValueTechNZ_Final.Models;
 
 namespace ValueTechNZ_Final.Services
 {
@@ -44,6 +46,46 @@ namespace ValueTechNZ_Final.Services
             }
 
             return cartSize;
+        }
+
+        public static List<OrderItem> GetCartItems(HttpRequest request, HttpResponse response,
+                                                   ApplicationDbContext context)
+        {
+            var cartITems = new List<OrderItem>();
+
+            var cartDictionary = GetCartDictionary(request, response);
+
+            foreach(var pair in cartDictionary)
+            {
+                var productId = pair.Key;
+                int quantity = pair.Value;
+                var product = context.Products.Find(productId);
+
+                if (product == null) continue;
+
+                var item = new OrderItem
+                {
+                    Quantity = quantity,
+                    UnitPrice = product.Price,
+                    Product = product
+                };
+
+                cartITems.Add(item);
+            }
+
+            return cartITems;
+        }
+
+        public static decimal GetSubTotal(List<OrderItem> cartItems)
+        {
+            decimal subtotal = 0;
+
+            foreach (var item in cartItems)
+            {
+                subtotal += item.Quantity + item.UnitPrice;
+            }
+
+            return subtotal;
         }
     }
 }
