@@ -1,0 +1,80 @@
+﻿
+@{
+}
+
+<h3 class="text-center mb-4">List of Orders</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">ID</th>
+            <th class="text-center">Client</th>
+            <th class="text-center">Units</th>
+            <th class="text-center">Total</th>
+            <th class="text-center">Payment Method</th>
+            <th class="text-center">Payment Status</th>
+            <th class="text-center">Order Status</th>
+            <th class="text-center">Date</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var order in ViewBag.Orders)
+        {
+
+            int count = 0;
+            decimal total = order.ShippingFee;
+            foreach(OrderItem item in order.Items)
+            {
+                count += item.Quantity;
+                total += item.Quantity * item.UnitPrice;
+            }
+
+            string paymentBadgeColor = "text-bg-danger";
+            if(order.PaymentStatus == "pending")
+            {
+                paymentBadgeColor = "text-bg-warning text-dark";
+            }
+            else if (order.PaymentStatus == "accepted")
+            {
+                paymentBadgeColor = "text-bg-success";
+            }
+            else if (order.PaymentStatus == "canceled")
+            {
+                paymentBadgeColor = "text-bg-secondary";
+            }
+
+            string orderBadgeColor = order.OrderStatus switch
+            {
+                "created" => "text-bg-danger",
+                "accepted" => "text-bg-warning text-dark",
+                "canceled" => "text-bg-secondary",
+                "shipped" => "text-bg-primary",
+                "delivered" => "text-bg-success",
+                "returned" => "text-bg-info text-dark",
+                "deleted" => "text-bg-dark",
+                _ => "text-bg-light" // Default case if none of the above matches
+            };
+
+
+            <tr>
+                <td>@order.Id</td>
+                <td>@(order.Client.FirstName + " " + order.Client.LastName)</td>
+                <td>@count</td>
+                <td>@(total)$</td>
+                <td>@order.PaymentMethod</td>
+                <td>
+                    <span class="badge @paymentBadgeColor">@order.PaymentStatus</span>
+                </td>
+                <td>
+                    <span class="badge @orderBadgeColor"> @order.OrderStatus</span>
+                </td>
+                <td>@order.CreatedAt.ToString("MM/dd/yyyy")</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" asp-controller="AdminOrders" asp-action="details"
+                       asp-route-id="@order.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

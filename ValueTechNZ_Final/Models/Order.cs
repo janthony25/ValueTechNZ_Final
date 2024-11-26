@@ -7,7 +7,7 @@ namespace ValueTechNZ_Final.Models
         public int Id { get; set; }
 
         public string ClientId { get; set; } = "";
-        public ApplicationUser Client = null!;
+        public ApplicationUser Client { get; set; } = null!;
 
         public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 
