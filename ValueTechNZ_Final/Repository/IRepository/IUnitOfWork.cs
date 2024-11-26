@@ -6,5 +6,6 @@
         ICategoryRepository Categories { get; }
         IStoreRepository Store { get; }
         IUserRepository Users { get; }
+        IOrderRepository Orders { get; }
     }
 }
