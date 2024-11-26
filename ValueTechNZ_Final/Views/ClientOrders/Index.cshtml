@@ -1,0 +1,86 @@
+﻿@using ValueTechNZ_Final.Helpers
+@model PaginatedList<Order>
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["PaginationAction"] = "Index";
+}
+
+<partial name="_Notification" />
+
+<h3 class="text-center mb-4">List of Orders</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="text-center">Units</th>
+            <th class="text-center">Total</th>
+            <th class="text-center">Payment Method</th>
+            <th class="text-center">Payment Status</th>
+            <th class="text-center">Order Status</th>
+            <th class="text-center">Date</th>
+            <th class="text-center">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model == null || Model.Items.Count == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="9">No Orders Available</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var order in Model.Items)
+            {
+                int count = 0;
+                decimal total = order.ShippingFee;
+                foreach (OrderItem item in order.Items)
+                {
+                    count += item.Quantity;
+                    total += item.Quantity * item.UnitPrice;
+                }
+                string paymentBadgeColor = "text-bg-danger";
+                if (order.PaymentStatus == "pending")
+                {
+                    paymentBadgeColor = "text-bg-warning text-dark";
+                }
+                else if (order.PaymentStatus == "accepted")
+                {
+                    paymentBadgeColor = "text-bg-success";
+                }
+                else if (order.PaymentStatus == "canceled")
+                {
+                    paymentBadgeColor = "text-bg-secondary";
+                }
+                string orderBadgeColor = order.OrderStatus switch
+                {
+                    "created" => "text-bg-danger",
+                    "accepted" => "text-bg-warning text-dark",
+                    "canceled" => "text-bg-secondary",
+                    "shipped" => "text-bg-primary",
+                    "delivered" => "text-bg-success",
+                    "returned" => "text-bg-info text-dark",
+                    "deleted" => "text-bg-dark",
+                    _ => "text-bg-light"
+                };
+                <tr>
+                    <td class="text-center">@count</td>
+                    <td class="text-center">@(total)$</td>
+                    <td class="text-center">@order.PaymentMethod</td>
+                    <td class="text-center">
+                        <span class="badge @paymentBadgeColor">@order.PaymentStatus</span>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge @orderBadgeColor"> @order.OrderStatus</span>
+                    </td>
+                    <td class="text-center">@order.CreatedAt.ToString("MM/dd/yyyy")</td>
+                    <td class="text-center">
+                        <a class="btn btn-primary btn-sm" asp-controller="ClientOrder" asp-action="Details"
+                           asp-route-id="@order.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<partial name="_Pagination" />

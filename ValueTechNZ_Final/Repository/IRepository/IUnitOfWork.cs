@@ -7,5 +7,6 @@
         IStoreRepository Store { get; }
         IUserRepository Users { get; }
         IOrderRepository Orders { get; }
+        IClientOrderRepository ClientOrders { get; }
     }
 }

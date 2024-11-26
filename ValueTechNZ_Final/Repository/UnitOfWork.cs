@@ -25,6 +25,7 @@ namespace ValueTechNZ_Final.Repository
             Store = new StoreRepository(_data, _loggerFactory);
             Users = new UserRepository(_userManager, _roleManager, _loggerFactory);
             Orders = new OrderRepository(_data, _loggerFactory);
+            ClientOrders = new ClientOrderRepository(_data, _loggerFactory, _userManager);
         }
         public IProductRepository Products { get; private set; }
 
@@ -35,5 +36,7 @@ namespace ValueTechNZ_Final.Repository
         public IUserRepository Users { get; private set; }
 
         public IOrderRepository Orders { get; private set; }
+
+        public IClientOrderRepository ClientOrders { get; private set; }
     }
 }
