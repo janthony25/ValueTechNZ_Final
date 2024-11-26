@@ -7,5 +7,6 @@ namespace ValueTechNZ_Final.Repository.IRepository
     {
         Task<PaginatedList<Order>> GetPaginatedOrdersAsync(int pageNumber, int pageSize);
 
+        Task<Order> GetOrderDetailsAsync(int id);
     }
 }

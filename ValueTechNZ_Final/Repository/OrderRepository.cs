@@ -17,6 +17,32 @@ namespace ValueTechNZ_Final.Repository
             _logger = loggerFactory.CreateLogger<OrderRepository>();
         }
 
+        public async Task<Order> GetOrderDetailsAsync(int id)
+        {
+            try
+            {
+                var order = await _data.Orders
+                        .Include(o => o.Client)
+                        .Include(o => o.Items)
+                            .ThenInclude(oi => oi.Product)
+                        .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (order == null)
+                {
+                    _logger.LogError($"order details with id {order.Id} not found.");
+                    throw new KeyNotFoundException("Order details not found.");
+                }
+
+                _logger.LogInformation($"Successfully retrieved order details for order with id {order.Id}");
+                return order;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving order details.");
+                throw;
+            }
+        }
+
         public async Task<PaginatedList<Order>> GetPaginatedOrdersAsync(int pageNumber, int pageSize)
         {
             try
