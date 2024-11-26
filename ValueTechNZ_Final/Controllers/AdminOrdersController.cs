@@ -70,5 +70,33 @@ namespace ValueTechNZ_Final.Controllers
                 return RedirectToAction("Index");
             }
         }
+
+        public async Task<IActionResult> Edit(int id, string? payment_status, string? order_status)
+        {
+            try
+            {
+                await _unitOfWork.Orders.UpdateStatusAsync(id, payment_status, order_status);
+                return RedirectToAction("Details", new { id });
+
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError("Order not found.");
+                TempData["ErrorMessage"] = "Order not found.";
+                return RedirectToAction("Index");
+            }
+            catch (ArgumentException)
+            {
+                _logger.LogError("Order status / Payment status not found.");
+                TempData["ErrorMessage"] = "Order status / Payment status not found.";
+                return RedirectToAction("Details", new { id });
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating order.");
+                TempData["ErrorMessage"] = "An error occurred while updating order.";
+                return RedirectToAction("Details", new { id });
+            }
+        }
     }
 }

@@ -61,5 +61,42 @@ namespace ValueTechNZ_Final.Repository
                 throw;
             }
         }
+
+        public async Task UpdateStatusAsync(int id, string? payment_status, string? order_status)
+        {
+            try
+            {
+                var order = await _data.Orders.FindAsync(id);
+
+                if(order == null)
+                {
+                    _logger.LogError($"Order wil id {id} not found.");
+                    throw new KeyNotFoundException("Order not found.");
+                }
+
+                if (payment_status == null && order_status == null)
+                {
+                    _logger.LogError("Order and Payment status not found.");
+                    throw new ArgumentException("Order and Payment status not found.");
+                }
+
+                if (payment_status != null)
+                {
+                    order.PaymentStatus = payment_status;
+                }
+
+                if (order_status != null)
+                {
+                    order.OrderStatus = order_status;
+                }
+
+                await _data.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating order.");
+                throw;
+            }
+        }
     }
 }
