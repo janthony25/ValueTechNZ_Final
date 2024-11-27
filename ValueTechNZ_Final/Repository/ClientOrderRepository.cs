@@ -23,6 +23,39 @@ namespace ValueTechNZ_Final.Repository
             _userManager = userManager;
         }
 
+        public async Task<Order> GetClientOrderDetailsAsync(ClaimsPrincipal user,int id) 
+        {
+            try
+            {
+                var currentUser = await _userManager.GetUserAsync(user);
+                if(currentUser == null)
+                {
+                    throw new ArgumentException("User not found.");
+                }
+
+                var order = await _data.Orders
+                        .Include(o => o.Items)
+                            .ThenInclude(oi => oi.Product)
+                        .Where(o => o.ClientId == currentUser.Id)
+                        .FirstOrDefaultAsync(o => o.Id == id);
+
+                if (order == null)
+                {
+                    _logger.LogError($"order details with id {order.Id} not found.");
+                    throw new KeyNotFoundException("Order details not found.");
+                }
+
+                _logger.LogInformation($"Successfully retrieved order details for order with id {order.Id}");
+                return order;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving order details.");
+                throw;
+            }
+        }
+
+
         public async Task<PaginatedList<Order>> GetPaginatedClientOrdersAsync(ClaimsPrincipal user,int pageNumber, int pageSize)
         {
             try

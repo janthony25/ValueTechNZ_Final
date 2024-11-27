@@ -33,5 +33,33 @@ namespace ValueTechNZ_Final.Controllers
             return View(orders);
             
         }
+
+        // GET : Order details
+        public async Task<IActionResult> Details(int id)
+        {
+            try
+            {
+                var order = await _unitOfWork.Orders.GetOrderDetailsAsync(id);
+
+                return View(order);
+            }
+            catch (ArgumentException)
+            {
+                _logger.LogError("User not found.");
+                return RedirectToAction("Index", "Home");
+            }
+            catch (KeyNotFoundException)
+            {
+                _logger.LogError("Order details not found.");
+                TempData["ErrorMessage"] = "Order details not found.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving order details.");
+                TempData["ErrorMessage"] = "An error occurred while retrieving order details.";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }

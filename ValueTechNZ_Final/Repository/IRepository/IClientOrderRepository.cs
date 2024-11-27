@@ -6,6 +6,7 @@ namespace ValueTechNZ_Final.Repository.IRepository
 {
     public interface IClientOrderRepository
     {
-        Task<PaginatedList<Order>> GetPaginatedClientOrdersAsync(ClaimsPrincipal user,int pageNumber, int pageSize); 
+        Task<PaginatedList<Order>> GetPaginatedClientOrdersAsync(ClaimsPrincipal user,int pageNumber, int pageSize);
+        Task<Order> GetClientOrderDetailsAsync(ClaimsPrincipal user,int id);
     }
-}
+}   
